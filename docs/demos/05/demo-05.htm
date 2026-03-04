@@ -1,0 +1,21 @@
+<html><head>
+<link rel="stylesheet" href="registration-form.css" />
+<script type="module" src="registration-form.js"></script>
+<script type="module">
+register.addEventListener( "click" , ( ) => {
+	debugger;
+		// Clone the registration form
+	const node = document.importNode( registrationFormTemplate.content, true );
+		// and insert the clone into the document.
+	document.body.append( node );
+	} ) ;
+</script>
+</head><body>
+<h1>Demo 5</h1><p class="subtitle">Instantiation from a template</p>
+<template id="registrationFormTemplate">
+	<!-- This template hosts the registration form element -->
+	<form is="registration-form"></form>
+	</template>
+<button id="register">Register</button>
+<p>Click the button to open the registration form.</p>
+</body></html>

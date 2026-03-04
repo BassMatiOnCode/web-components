@@ -1,0 +1,6 @@
+div[is = "custom-element"] {
+	color : indianred ;
+	}
+div#toolbar {
+	margin-bottom : 20px ;
+	}

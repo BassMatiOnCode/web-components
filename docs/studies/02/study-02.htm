@@ -1,0 +1,16 @@
+<html><head><!--Coexistence of elements in the shadow tree-->
+<style>
+span { color : red }  /* has no effect on the SPAN in the component's shadow tree */
+</style>
+<script type="module" src="component.js?shadowmode=closed"></script>
+<script type="module">
+console.log( document.getElementById( "span-in-shadowtree" )); // null
+console.log( document.getElementById( "host" ).shadowRoot?.getElementById( "span-in-shadowtree" ));  // <span id="span-in-shadowtree">SPAN in the shadow DOM</span> or undefined
+</script>
+</head><body>
+
+<span>SPAN in the document</span>
+<div id="host" is="web-component"></div>
+
+
+</body></html>

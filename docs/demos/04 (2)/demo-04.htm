@@ -1,0 +1,32 @@
+<html><head>
+<link rel="stylesheet" href="custom-element.css" />
+<script type="module" src="custom-element.js"></script>
+<script type="module">
+const customElement = document.getElementById( "customElement" ) ;
+insertElement.addEventListener( "click" , ( ) => {
+	first.before( customElement );
+	removeElement.toggleAttribute( "disabled" );
+	insertElement.toggleAttribute( "disabled" );
+	moveElement.toggleAttribute( "disabled" );
+	} ) ;
+removeElement.addEventListener( "click" , ( ) => {
+	customElement.remove( );
+	removeElement.toggleAttribute( "disabled" );
+	insertElement.toggleAttribute( "disabled" );
+	moveElement.toggleAttribute( "disabled" );
+	} ) ;
+moveElement.addEventListener( "click" , ( ) => {
+	document.body.moveBefore( customElement, ! customElement.nextElementSibling ?document.getElementById( "first" ) : customElement.nextElementSibling.nextElementSibling );
+	} ) ;
+</script>
+</head><body>
+<h1>Demo 4</h1><p class="subtitle">Lifecycle callbacks</p>
+<div id="toolbar">
+	<button id="insertElement" disabled>Insert</button>
+	<button id="moveElement">Move</button>
+	<button id="removeElement">Remove</button>
+	</div>
+<div is="custom-element" id="customElement">Here is a customized built-in element. It inherits the display:block style by default.</div>
+<p id="first">This is the first paragraph.</p>
+<p id="second">This is the second paragraph.</p>
+</body></html>

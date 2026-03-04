@@ -1,0 +1,82 @@
+<html><head>
+<link rel="stylesheet" href="custom-element.css" />
+<script type="module" src="custom-element.js"></script>
+<style>
+li[ active ] { color : indianred }
+</style>
+<script type="module">
+let activeListItem = null;
+let removedListItem = null;
+document.body.addEventListener( "click" , ( ) => {
+	if ( ! activeListItem ) return ;
+	activeListItem.toggleAttribute( "active" );
+	activeListItem = null ;
+	// Deactivate buttons
+	moveUpButton.toggleAttribute( "disabled" );
+	moveDownButton.toggleAttribute( "disabled" );
+	removeButton.toggleAttribute( "disabled" );
+	if ( removedListItem ) insertButton.toggleAttribute( "disabled" );
+	} ) ;
+theList.addEventListener( "click" , evt => {
+	if ( activeListItem ) activeListItem.toggleAttribute( "active" );
+	else {  // enable buttons
+		moveUpButton.toggleAttribute( "disabled" );
+		moveDownButton.toggleAttribute( "disabled" );
+		if ( ! removedListItem ) removeButton.toggleAttribute( "disabled" );
+		}
+	activeListItem = evt.target ;
+	activeListItem.toggleAttribute( "active" );
+	evt.stopPropagation( );
+	} ) ;
+moveUpButton.addEventListener( "click" , evt => {
+	evt.stopPropagation( );
+	if ( theList.firstElementChild === activeListItem ) return ;
+	theList.moveBefore( activeListItem, activeListItem.previousElementSibling );
+	} ) ;
+moveDownButton.addEventListener( "click" , evt => {
+	evt.stopPropagation( );
+	if ( theList.lastElementChild === activeListItem ) return ;
+	theList.moveBefore( activeListItem, activeListItem.nextElementSibling.nextElementSibling );
+	} ) ;
+removeButton .addEventListener( "click" , evt => {
+	evt.stopPropagation( );
+	activeListItem.remove( );
+	removedListItem = activeListItem;
+	activeListItem = null ;
+	// Enable insert button
+	insertButton.toggleAttribute( "disabled" );
+	// Disable other buttons
+	removeButton.toggleAttribute( "disabled" );
+	moveUpButton.toggleAttribute( "disabled" );
+	moveDownButton.toggleAttribute( "disabled" );
+	} ) ;
+insertButton.addEventListener( "click" , evt => {
+	evt.stopPropagation( );
+	theList.insertBefore( removedListItem, activeListItem );
+	activeListItem?.toggleAttribute( "active" );
+	activeListItem = removedListItem;
+	removedListItem = null;
+	insertButton.toggleAttribute( "disabled" );
+	removeButton.toggleAttribute( "disabled", false );
+	moveUpButton.toggleAttribute( "disabled", false );
+	moveDownButton.toggleAttribute( "disabled", false );
+	} ) ;
+</script>
+</head><body>
+<h1>Demo 4</h1><p class="subtitle">Lifecycle callbacks</p>
+<div id="toolbar">
+	<button id="removeButton" disabled>Remove</button>
+	<button id="insertButton" disabled>Insert</button>
+	<button id="moveUpButton" disabled>Move up</button>
+	<button id="moveDownButton" disabled>Move down</button>
+	</div>
+
+<ol id="theList">
+<li tabindex="0" is="custom-list-element">Item A</li>
+<li tabindex="0" is="custom-list-element">Item B</li>
+<li tabindex="0" is="custom-list-element">Item C</li>
+<li tabindex="0" is="custom-list-element">Item D</li>
+<li tabindex="0" is="custom-list-element">Item E</li>
+</ol>
+
+</body></html>

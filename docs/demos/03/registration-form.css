@@ -1,0 +1,16 @@
+form[ is = "registration-form" ] {
+	padding : 10px 5px ;
+	border : 1px solid silver ;
+	display : block ;
+	}
+form[ is = "registration-form" ] input {
+	width : stretch ;
+	}
+form[ is = "registration-form" ] table {
+	position : relative ;
+	width : stretch ;
+	border : 1px none silver;
+	}
+form[ is = "registration-form" ] table td {
+	border : 1px none silver ;
+	}

@@ -1,0 +1,116 @@
+<html><head>
+
+</head><body>
+
+<h2 cbc>ShadowRoot Module</h2><div>
+
+<p>A custom element should not break styles and scripts the host document, and vice versa. We need a kind of encapsulation for web components: The shadowroot. It is a special kind of node that acts as an access barrier for CSS and scripts, in both directions. A CSS or script selector cannot access HTML elements on the other side of that barrier, neither below nor above. So the scope of style rules is limited to the the DOM tree they where live in: Global CSS cannot style elements below a shadowroot, and CSS below a shadowroot cannot style elements outside that shadow tree. Similarly, elemsents defined in a shadow tree are not visible outside the boundaries of this shadow tree. Such encapsulation is an essential aspect of re-usable web components.</p>
+
+<p>A <em>shadow tree</em> is a DOM tree where the root node is a shadow root node.</p>
+
+<svg style="border : 1px none silver" width="240" height="230">
+<style>
+text { fill : black ; stroke : none ; font-size: 10px ; font-family : arial, "palatino linotype", "times new roman" ; text-anchor : middle ; dominant-baseline : central }
+circle { fill : white ; stroke : black ; stroke-width : 1px }
+line { stroke : black ; stroke-width : 1px }
+</style>
+<g transform="translate( 125, 25 )">
+	<line y2="50" />
+	<circle r="17" />
+	<text style="font-size:9px">BODY</text>
+	</g>
+<g transform="translate( 125, 75 )">
+	<line x2="-50" y2="50" />
+	<line x2="+50" y2="50" />
+	<circle r="15" />
+	<text>DIV</text>
+	<text x="25" style="text-anchor: start">Shadow Host</text>
+	</g>
+<g transform="translate( 175, 100 )">
+	<rect x="-40" y="0" width="80" height="115" fill="none" stroke="black" stroke-dasharray="5 5"/>
+	<text y="100">Light tree</text>
+	</g>
+<g transform="translate( 175, 125 )">
+	<line  y2="50" />
+	<circle r="15" />
+	<text>DIV</text>
+	</g>
+<g transform="translate( 175, 175 )">
+	<circle r="15" />
+	<text>P</text>
+	</g>
+<g transform="translate( 75, 100 )">
+	<rect x="-50" y="25" width="100" height="90" fill="none" stroke="black" stroke-dasharray="5 5"/>
+	<text y="100">Shadow tree</text>
+	</g>
+<g transform="translate( 75, 125 )">
+	<line x2="-20" y2="50" />
+	<line x2="+20" y2="50" />
+	<circle r="15" style="fill : lightblue" />
+	<text>SR</text>
+	</g>
+<g transform="translate( 55, 175 )">
+	<circle r="15" />
+	<text>P</text>
+	</g>
+<g stroke="black" stroke-width="1" fill="none" transform="translate( 95, 175 )">
+	<circle r="15" />
+	<text>P</text>
+	</g>
+</svg>
+
+<p>A shadowroot node can be created programmatically or declarativly. Here is an example of programmatic creation:</p>
+
+<pre>
+&lt;div id="shadowrootHost"&gt;&lt;/div&gt;
+&lt;script type="module"&gt;
+shadowrootHost.attachShadow({mode:"open"});
+const p = document.createElement( "P" );
+p.textContent = "I'm in the shadowtree" ;
+shadowrootHost.shadowRoot.append( p );
+&lt;/script&gt;
+</pre>
+
+<p>And here the declarative approach:</p>
+
+<pre>
+&lt;div id="shadowrootHost"&gt;
+	&lt;template shadowrootmode="open"&gt;
+		&lt;p&gt;I'm in the shadowtree&lt;/p&gt;
+	&lt;/template&gt;
+&lt;/div&gt;
+</pre>
+
+<h3 cbc>Crossing the Border</h3><div>
+
+<p>The access-barrier, created by a shadow root node, is not impenetrable for JavaScript if the shadow root was created with <tt>shadowrootmode="open"</tt>:</p>
+
+<pre>shadowRootHost.shadowRoot.querySelectorAll( "P" )</pre>
+
+<p>Elements can be accessed via the <tt>shadowRoot</tt> property of the shadow root host.</p>
+
+<!--h3--Crossing the Border--></div>
+
+<!--h2--ShadowRoot Module--></div>
+
+<h2 cbc>Shadow Parts Module</h2><div>
+
+<p>The <em>CSS Shadow Parts</em> module adresses the need for global CSS to style elements across a shadowroot boundary. A web component author can decide to make certain elements below the shadowroot accessible to global CSS rules.</p>
+
+<dl>
+<dt><tt>part</tt> attribute</dt><dd>
+	<p>The <tt>part</tt>attribute on a shadowroot host element contains a comma separated list of elements in the shadowroot. These elements are made accessible to the CSS <tt>:part()</tt> pseudo element selector in the parent DOM tree (where the host element lives in). The visibility stretches across exactly one shadowroot boundary. So if a web component is nested in another web component, the outer web component can style the published child component elements, but the global CSS in the root document cannot.</p>
+	</dd>
+<dt><tt>exportparts</tt> attribute</dt><dd>
+	<p>The <tt>exportparts</tt> attribute on a shadowroot host element works similiar to the <tt>part</tt> attribute, but the accessibility is extended to the entire document above the shadow root.</p>	
+	<p>The attribute contains a comma-separated list of id:alias mappings, where the id references an element in the shadow tree beneath the shadow root, and the alias is the name under which it is published to the <tt>:part()</tt> CSS selector.</p>
+	</dd>
+<dt><tt>:part()</tt> CSS pseudo-element</dt><dd>
+	<p>The <tt>:part()</tt> pseudo-element in a stylescheed selects an element in a shadow DOM tree that has been made accessible through the <tt>part</tt> or <tt>partlist</tt> attributes on shadowroot host elements.</p>
+	</dd>
+</dl>
+
+<!--h2--Shadow Parts Module--></div>
+
+
+</body></html>

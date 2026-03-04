@@ -1,0 +1,22 @@
+﻿<!doctype html>
+<html><head>
+
+<meta charset="utf-8" />
+<title>Pop-up info box — web components demo</title>
+<script src="popup-info.js" defer></script>
+
+</head><body>
+
+<h1>Demo 2: Pop-up info widget - Web Components</h1>
+
+<p>This demo illustrates the <tt>connectedCallback()</tt> method, and how to create and configure child elements.</p>
+<p>Note the console messages about the style element being connected.</p>
+
+<form><div>
+	<label for="cvc">Enter your CVC
+		<popup-info img="alt.png" data-text="Your card validation code (CVC) is an extra security feature — it is the last 3 or 4 numbers on the back of your card."></popup-info>
+	</label>
+	<input type="text" id="cvc" />
+	</div></form>
+
+</body></html>

@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+
+<script>if ( ! window.frameElement && document.location.search.search("\\host=no\\b") < 0) navigation.navigate( `/index-spa.htm?goto=${ document.location.href }` );</script>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="template-info" file-name="empty.htm" version="2025-10-20" editor="USP" />
+<meta name="author" content="USP" />
+<meta name="creation-date" content="2025-10-20" />
+<meta name="editor" content="USP" />
+<meta name="change-date" content="2025-10-26" />
+<meta name="version" content="1" />
+<meta name="sectionTitle" content="../title.svg" />
+<base target="_top" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" sizes="all" />
+<link rel="stylesheet" href="/spa-iframe-content.css" />
+<script type="module" src="/spa-iframe-content.js"></script>
+<meta name="categories" content="Projects > Web > Content Authoring Toolbox" />
+<meta name="tags" content="web, authoring, toolbox, HTML, JavaScript, CSS" />
+<title>Web Components (Programming > Web)</title>
+<meta name="description" content="" />
+
+</head><body>
+
+<h1>Web Components</h1>
+
+<p>Web components are built on three technologies:</p>
+
+<ul>
+<li>Custom elements</li>
+<li>Shadow DOM</li>
+<li>HTML TEMPLATE and SLOT elements</li>
+</ul>
+
+<p>Custom elements are the basis for web components. They combine a user interface with styles and code.</p>
+
+<p>The shadow DOM provides separation between a web component and the host document. Attaching a <tt>ShadowRoot</tt> to a custom element separates styles and script code from the host document, while events from child elements can still reach the host document.</p>
+
+<p>TEMPLATE and SLOT elements are used to dynamically build a custom element at run-time.</p>
+
+<h2 cbc>Different Approaches</h2><div>
+
+<figure class="listing"><figcaption>Traditional HTML</figcaption><pre>
+&lt;html&gt;&lt;head&gt;
+	&lt;link rel="stylesheet" href="page-header.css" /&gt;
+	&lt;link rel="stylesheet" href="main-menu.css" /&gt;
+	&lt;link rel="stylesheet" href="page-breadcrumbs.css" /&gt;
+	&lt;link rel="stylesheet" href="product-group.css" /&gt;
+	&lt;link rel="stylesheet" href="page-footer.css" /&gt;
+	&lt;script type="module" src="page-header"&gt;&lt;/script&gt;
+	&lt;script type="module" src="main-menu"&gt;&lt;/script&gt;
+	&lt;script type="module" src="page-breadcumbs"&gt;&lt;/script&gt;
+	&lt;script type="module" src="product-group"&gt;&lt;/script&gt;
+	&lt;script type="module" src="page-footer"&gt;&lt;/script&gt;
+&lt;/head&gt;&lt;body&gt;
+	&lt;div class="page-header"&gt;&lt;/div&gt;
+	&lt;div class="main-menu"&gt;&lt;/div&gt;
+	&lt;div class="page-breadcrumbs"&gt;&lt;/div&gt;
+	&lt;div class="product-group" data-group-id="A"&gt;&lt;/div&gt;
+	&lt;div class="product-group" data-group-id="B"&gt;&lt;/div&gt;
+	&lt;div class="product-group" data-group-id="C"&gt;&lt;/div&gt;
+	&lt;div class="product-group" data-group-id="D"&gt;&lt;/div&gt;
+	&lt;div class="page-footer"&gt;&lt;/div&gt;
+&lt;/body&gt;&lt;/html&gt;
+</pre></figure>
+
+<!--h2--Different Approaches--></div>
+
+<h2 cbc>Custom Elements</h2><div>
+
+<p>There are two types of web components:</p>
+
+<ul>
+<li>Autonomous custom elements</li>
+<li>Customized built-in elements</li>
+</ul>
+
+<p>Autonomous custom elements derive from <tt>HTMLElement</tt>, the base class of all HTML elements. That means that you must explicitly implement  some aspects of your component (which is not necessarily difficult nor tedious). Customized built-in elements derive from a specific HTML element, such as <tt>HTMLParagraph</tt>, and thereby inherit its behavior.</p>
+
+<p>Autonomous custom elements can have internal custom states to store the component state, customized built-in elements cannot.</p>
+
+<h3 cbc>Creating the Component Class</h3><div>
+
+<p>The first step to create a web component is to write a script that implements the component class and its logic:</p>
+
+<figure class="listing"><figcaption>Autonomous cutom element class</figcaption><pre>
+class CustomElement extends <hi>HTMLElement</hi> {
+constructor ( ) {
+	super( );
+}	}
+</pre></figure>
+
+<p>For customized built-in elements, derive your class from the parent element type:</p>
+
+<figure class="listing"><figcaption>Customized built-in element class</figcaption><pre>
+class CustomizedDiv extends <hi>HTMLDivElement</hi> {
+constructor ( ) {
+	super( );
+}	}
+</pre></figure>
+
+<!--h3--Creating the Component Class--></div>
+
+<h3 cbc>Class Registration</h3><div>
+
+<p>The second step is to register your class with <tt>Window.customElements</tt>, the custom element registry:</p>
+
+<figure class="listing"><figcaption>Registering an autonomous custom element</figcaption><pre>
+<hi>customElements</hi>.<hi>define</hi>( "custom-element", CustomElement );
+</pre></figure>
+
+<p>The first parameter is the tag name for our component, which must contain at least one dash character. The second parameter is our class name, or the name of constructor function in case you set up the prototype chain the old-fashioned way.</p>
+
+<p>To register a customized built-in element, we must add an object to the argument list that carries the <tt>extends</tt> property:</p>
+
+<p>The <tt>options</tt> parameter is an object which is only necessary for customized built-in elements:</p>
+
+<figure class="listing"><figcaption>Registering an autonomous custom element</figcaption><pre>
+<hi>customElements</hi>.<hi>define</hi>( "custom-element", CustomElement, { extends : "div" } );
+</pre></figure>
+
+<p>The <tt>extends</tt> member is a <tt>String</tt> that specifies the tag-name of the HTML base element we derived our class from.  In this case, it is the HTML DIV element.</p>
+
+<p class="note">NOTE that the tag-name should appear in lowercase letters, otherwise the element might not be recognized.</p>
+
+<!--h3--Registration--></div>
+
+<h3 cbc id="demo-1">Demo 1</h3><div>
+
+<p>This first demonstration shows how to create an autonomous custom element. Let's have a look on the HTML code first:</p>
+
+<figure class="listing"><figcaption>HTML code</figcaption><pre>
+&lt;html&gt;&lt;head&gt;
+	&lt;link rel="stylesheet" href="custom-element.css" /&gt;
+	&lt;script type="module" src="custom-element.js"&gt;&lt;/script&gt;
+&lt;/head&gt;&lt;body&gt;
+	&lt;h1&gt;Demo 1&lt;/h1&gt;&lt;p class="subtitle"&gt;&lt;/p&gt;
+	&lt;p&gt;Here is an &lt;custom-element&gt;autonomous custom element&lt;/custom-element&gt;. It has display:inline style by default.&lt;/p&gt;
+&lt;/body&gt;&lt;/html&gt;
+</pre></figure>
+
+<p>We have a stylesheet with a rule that demands a red color for the text in the custom element:</p>
+
+<figure class="listing"><figcaption>CSS rules for the custom element</figcaption><pre>
+custom-element {
+	color : indianred ;
+	}
+</pre></figure>
+
+<p>The SCRIPT imports the code for the custom element class and the registration:</p>
+
+<figure class="listing"><figcaption>HTML code</figcaption><pre>
+class <hi>CustomElement</hi> extends <hi>HTMLElement</hi> {
+constructor ( ) {
+	console.log( "CustomElement constructor()" );
+	super( );
+	}	
+} 
+customElements.<hi>define</hi>( "<hi>custom-element</hi>", <hi>CustomElement</hi> ) ;
+</pre></figure>
+
+<p>The class <tt>CustomElement</tt> extends the <tt>HTMLElement</tt> and is introduced as <tt>custom-element</tt> to the <tt>customElements</tt> registry.</p>
+
+<!--h3--Demo 1--></div>
+
+<h3 cbc>Demo 2</h3><div>
+
+<p>This example demonstrates the use of a customized built-in element, an <tt>HTMLDivElement</tt>. </p>
+
+<figure class="listing"><figcaption>Customized built-in element</figcaption><pre>
+class <hi>CustomElement</hi> extends <hi>HTMLDivElement</hi> {
+constructor ( ) {
+	console.log( "CustomElement constructor()" );
+	super( );
+	}	
+} 
+customElements.<hi>define</hi>( "<hi>custom-element</hi>", <hi>CustomElement</hi>, { extends : "<hi>div</hi>" } ) ;
+</pre></figure>
+
+<p>The custom element is used in an HTML document:</p>
+
+<figure class="listing"><figcaption>Using the custom element</figcaption><pre>
+&lt;html&gt;&lt;head&gt;
+	&lt;link rel="stylesheet" href="custom-element.css" /&gt;
+	&lt;script type="module" src="custom-element.js"&gt;&lt;/script&gt;
+&lt;/head&gt;&lt;body&gt;
+	&lt;h1&gt;Demo 2&lt;/h1&gt;&lt;p class="subtitle"&gt;&lt;/p&gt;
+	&lt;p&gt;This is a paragraph.&lt;/p&gt;
+	&lt;div is = "custom-element"&gt;Here is a customized built-in element. It inherits the display:block style by default.&lt;/div&gt;
+	&lt;p&gt;Another paragraph.&lt;/p&gt;
+&lt;/body&gt;&lt;/html&gt;
+</pre></figure>
+
+<!--h3--Demo 2--></div>
+
+<h3 cbc>Lifecycle callbacks</h3><div>
+
+<p>The constructor of our class should not set up the custom element, attributes and child nodes might not yet be accessible when the constructor runs. Instead, lifecycle callback methods are used for component setup and cleanup in different situations:</p>
+
+<dl>
+<dt><tt>connectedCallback()</tt></dt><dd>
+	<p>Called each time the custom element is added to a document or introduced to the custom element registry. Purpose: Setup the custom element instance, create child elements, create a shadow DOM, add styles, et cetera.</p>
+	</dd>
+<dt><tt>disconnectedCallback()</tt></dt><dd>
+	<p>Called each time the element is removed from the document. Place cleanup code here.</p>
+	</dd>
+<dt><tt>connectedMoveCallback()</tt></dt><dd>
+	<p>Called instead of <tt>connectedCallback()</tt> and <tt>disconnectedCallback()</tt> each time the element is moved to a different place in the same document, for example via <tt>Element.moveBefore()</tt> or <tt>Element.insertBefore()</tt>. When implemented, <tt>disconnectedCallback()</tt> and <tt>connectedCallback()</tt> are <em>not</em> called so that unnecessary element setup and cleanup code is avoided in order to maintain the current component state.</p>
+	</dd>
+<dt><tt>adoptedCallback()</tt></dt><dd>
+	<p>Called each time the element is moved to a different document, for example, from an IFRAMEd document to the host document.</p>
+	</dd>
+<dt><tt>attributeChangedCallback()</tt></dt><dd>
+	<p>Called when attributes are changed, added, removed, or replaced. See <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#responding_to_attribute_changes">Responding to attribute changes</a> for details.</p>
+	</dd>
+</dl>
+
+<!--h3--Lifecycle Callbacks--></div>
+
+<h3 cbc id="demo-3">Demo 3</h3><div>
+
+<p>One purpose of custom elements is to reduce typing effort for the web page authors. Therefore, the content, or at least some of the content, is generated by a script.Demo 3 demonstrates that by using a lifecycle callback method:</p>
+
+<figure class="listing"><figcaption>Content generation</figcaption><pre>
+class <hi>RegistrationForm</hi> extends <hi>HTMLFormElement</hi> {
+<hi>constructor( )</hi> {
+	console.log( "CustomElement constructor()" );
+	super( );
+	}	
+<hi>connectedCallback( )</hi> {
+	console.log( "CutomElement.connectedCallback()" );
+	this.innerHTML = `&lt;table&gt;&lt;tbody&gt;&lt;tr&gt;
+			&lt;td&gt;&lt;label for="firstName"&gt;First name:&lt;/label&gt;&lt;/td&gt;
+			&lt;td&gt;&lt;input id="firstName" type="text" /&gt;&lt;/td&gt;
+		&lt;/tr&gt;&lt;tr&gt;
+			&lt;td&gt;&lt;label for="lastName"&gt;Last name:&lt;/label&gt;&lt;/td&gt;
+			&lt;td&gt;&lt;input id="lastName" type="text" /&gt;&lt;/td&gt;
+		&lt;/tr&gt;&lt;tr&gt;
+			&lt;td&gt;&lt;label for="email"&gt;EMail:&lt;/label&gt;&lt;/td&gt;
+			&lt;td&gt;&lt;input id="email" type="text" /&gt;&lt;/td&gt;
+		&lt;/tr&gt;&lt;tr&gt;
+			&lt;td&gt;&lt;/td&gt;
+			&lt;td&gt;&lt;button&gt;Submit&lt;/button&gt;&lt;/td&gt;
+		&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+		&lt;/form&gt;
+		` ;
+	}
+} 
+customElements.define( "registration-form", RegistrationForm, { extends : "form" } ) ;
+</pre></figure>
+
+<p>The HTML document is not cluttered with the code for the registration form:</p>
+
+<figure class="listing"><figcaption>Using the registration form element</figcaption><pre>
+&lt;html&gt;&lt;head&gt;
+	&lt;link rel="stylesheet" href="registration-form.css" /&gt;
+	&lt;script type="module" src="registration-form.js"&gt;&lt;/script&gt;
+&lt;/head&gt;&lt;body&gt;
+	&lt;h1&gt;Demo 3&lt;/h1&gt;&lt;p class="subtitle"&gt;Lifecycle Callbacks&lt;/p&gt;
+	&lt;form <hi>is="registration-form"</hi>&gt;&lt;/form&gt;
+&lt;/body&gt;&lt;/html&gt;
+</pre></figure>
+
+<!--h3--Demo 3--></div>
+
+<h3 cbc id="demo-4">Demo 4</h3><div>
+
+<p>This example shows how custom elements is moved around in the document. The demo implements a number of custom list items, that can be moved up and down in the list, removed from the document then inserted again.
+This pattern can be used to reorder elements in a list with state-preserving moves. It demonstrates the use of <tt>connectedMoveCallback()</tt> lifecylcle callbacks. Consider the following HTML document:</p>
+
+<figure class="listing"><figcaption>Acustom element in the document</figcaption><pre>
+&lt;html&gt;&lt;head&gt;
+	&lt;link rel="stylesheet" href="custom-element.css" /&gt;
+	&lt;script type="module" src="custom-element.js"&gt;&lt;/script&gt;
+	&lt;script type="module"&gt;
+		...
+	&lt;/script&gt;
+&lt;/head&gt;&lt;body&gt;
+	&lt;h1&gt;Demo 4&lt;/h1&gt;&lt;p class="subtitle"&gt;Lifecycle callbacks&lt;/p&gt;
+	&lt;div id="toolbar"&gt;
+		&lt;button id="insertElement" disabled&gt;Insert&lt;/button&gt;
+		&lt;button id="moveElement"&gt;Move&lt;/button&gt;
+		&lt;button id="removeElement"&gt;Remove&lt;/button&gt;
+		&lt;/div&gt;
+	&lt;div <hi>is="custom-element"</hi> id="customElement"&gt;Here is a customized built-in element. It inherits the display:block style by default.&lt;/div&gt;
+	&lt;p id="first"&gt;This is the first paragraph.&lt;/p&gt;
+	&lt;p id="second"&gt;This is the second paragraph.&lt;/p&gt;
+&lt;/body&gt;&lt;/html&gt;
+</pre></figure>
+
+<p>In the HEAD we import the stylesheet and script for our custom element. Then there is another script to which we will come back in a few seconds.</p>
+
+<p>The BODY hosts a tool bar with a number of buttons, below is our custom element and a few paragraphs with some text. The buttons shall be used to move our custom element around in the document, or remove or re-insert it. The second script contains the logic for that:</p>
+
+<figure class="listing"><figcaption>Moving the element around</figcaption><pre>
+<cc>// Save a reference to our custom element</cc>
+const customElement = document.getElementById( "customElement" ) ;
+<hi>insertElement</hi>.addEventListener( "click" , ( ) =&gt; {
+	first.before( customElement );
+	removeElement.toggleAttribute( "disabled" );
+	insertElement.toggleAttribute( "disabled" );
+	moveElement.toggleAttribute( "disabled" );
+	} ) ;
+<hi>removeElement</hi>.addEventListener( "click" , ( ) =&gt; {
+	customElement.remove( );
+	removeElement.toggleAttribute( "disabled" );
+	insertElement.toggleAttribute( "disabled" );
+	moveElement.toggleAttribute( "disabled" );
+	} ) ;
+<hi>moveElement</hi>.addEventListener( "click" , ( ) =&gt; {
+	document.body.<hi>moveBefore</hi>( customElement, ! customElement.nextElementSibling ?document.getElementById( "first" ) : customElement.nextElementSibling.nextElementSibling );
+	} ) ;
+</pre></figure>
+
+<p>The first instruction saves a reference to our custom element, otherwise it would be gone as soon as it was removed from the document.</p>
+
+<p>The first event handler inserts the custom element into the document before the first paragraph. The second one uses the method <tt>moveBefore()</tt> to move the custom element further down the document. The third one removes the element from the document.</p>
+
+<p>Here is the custom element code:</p>
+
+<figure class="listing"><figcaption>Lifecycle callbacks</figcaption><pre>
+class CustomElement extends HTMLDivElement {
+constructor ( ) {
+	console.log( "CustomElement constructor()" );
+	super( );
+	}
+<hi>connectedCallback</hi> ( ) {
+	console.log( "connectedCallback()" );
+	}	
+<hi>disconnectedCallback</hi> ( ) {
+	console.log( "disconnectedCallback()" );
+	}	
+<hi>connectedMoveCallback</hi> ( ) {
+	console.log( "connectedMoveCallback()" );
+	}	
+adoptedCallback ( ) {
+	console.log( "adoptedCallback()" );
+	}	
+} 
+customElements.define( "custom-element", CustomElement, { extends : "div" } ) ;
+</pre></figure>
+
+<p>The lifecycle callbacks essentially do nothing, they only log a message to the brower console.</p>
+
+<p>An inspection on these messages produces the following results:</p>
+
+<ol>
+<li>Right after registration, the custom element constructor and the connected callback methods run. Typically <tt>connectedCallback()</tt> is used to initialize the state of the element.</li>
+
+<li>If you click the "Remove" button, the element will be removed from the document. The <tt>disconnectCallback()</tt> runs. This is the place to run some cleanup, which usually will destroy the element state.</li>
+
+<li>If you click the "Insert" button, the <tt>connectCallback()</tt> runs and initializes the state of the element.</li>
+
+<li>If you click on the "Move" button, the custom element is moved to a different location in the document. <tt>connectedMoveCallback()</tt> runs. You can leave this method empty; its purpose is to simply prevent <tt>disconnectedCallback()</tt> and <tt>connectedCallback()</tt> to run and mess up the element state.</li>
+</ol>
+
+<figure class="demo"><figcaption>Moving around (<a href="demos/04/demo-04.htm" target="_blank">demo-04.htm</a>)</figcaption>
+<iframe class="content-height-observed" src="demos/04/demo-04.htm"></iframe>
+</figure>
+
+<!--h3--Demo 4--></div>
+
+<h3 cbc id="demo-5">Demo 5</h3><div>
+
+<p>This demonstrates the moving a custom element in a template to the host document. The HTML:</p>
+
+<figure class="listing"><figcaption>Template with custom element</figcaption><pre>
+&lt;html&gt;&lt;head&gt;
+	&lt;link rel="stylesheet" href="registration-form.css" /&gt;
+	&lt;script type="module" src="registration-form.js"&gt;&lt;/script&gt;
+	&lt;script type="module"&gt;
+	register.addEventListener( "click" , ( ) =&gt; {
+		debugger;
+			// Clone the registration form
+		const node = document.importNode( registrationFormTemplate.content, true );
+			// and insert the clone into the document.
+		document.body.append( node );
+		} ) ;
+	&lt;/script&gt;
+&lt;/head&gt;&lt;body&gt;
+	&lt;h1&gt;Demo 5&lt;/h1&gt;&lt;p class="subtitle"&gt;Instantiation from a template&lt;/p&gt;
+	&lt;template id="registrationFormTemplate"&gt;
+		&lt;!-- This template hosts the registration form element --&gt;
+		&lt;form is="registration-form"&gt;&lt;/form&gt;
+		&lt;/template&gt;
+	&lt;button id="register"&gt;Register&lt;/button&gt;
+	&lt;p&gt;Click the button to open the registration form.&lt;/p&gt;
+&lt;/body&gt;&lt;/html&gt;
+</pre></figure>
+
+<!--h3--Demo 5--></div>
+
+<h3 cbc>Reacting to Attribute Changes</h3><div>
+
+<p>Custom elements can declare a list of attributes to be monitored in their <tt>static observedAttributes</tt> property:</p>
+
+<figure class="listing"><figcaption>Announcing monitored attributes</figcaption><pre>
+class myComponent extends HTMLElement {
+	<cc>// Define custom attributes</cc>
+	static <hi>observedAttributes</hi> = [ 
+		"attributeA", "attibuteB" ];
+</pre></figure>
+
+<p>To monitor attribute changes, add the <tt>attributeChangedCallback()</tt> method to the class:</p>
+
+<figure class="listing"><figcaption>Monitoring attribute changes</figcaption><pre>
+<hi>attributeChangedCallback</hi> ( attributeName, oldValue, newValue ) {
+	console.log( `Attribute ${ attributeName } has changed from ${ oldValue } to ${ newValue }.` );
+	}
+</pre></figure>
+
+<!--h3--Reacting to Attribute Changes--></div>
+
+<h3 cbc>Custom States</h3><div>
+
+<p>Built-in elements have internal states, such as <tt>:hover</tt> or <tt>:checked</tt>. Autonomous custom elements can implement their own internal custom state properties, customized built-in element cannot. Internal means that the state cannot be modified from the outside, only from the inside of the custom element.</p>
+
+<p>To make internal states available to external CSS selectors as read-only properties, call the <tt>attachInternals()</tt> method in the constructor:</p>
+
+<figure class="listing"><figcaption>Attaching internals</figcaption><pre>
+class webComponent extends <hi>HTMLElement</hi> {
+constructor ( ) {
+	super( );
+	this.internals = this.<hi>attachInternals</hi>( );
+	}
+</pre></figure>
+
+<p>Then add getters and setters for custom states:</p>
+
+<figure class="listing"><figcaption>Attaching internals</figcaption><pre>
+get <hi>someState</hi> ( ) {
+	return this.<hi>internals.states.has( "someState" )</hi>;
+	}
+set <hi>someState</hi> ( value ) {
+	const method = value ? "add" : "delete" ;
+	this.<hi>internals.states[ method ]( "someState" )</hi>;
+	}
+</pre></figure>
+
+
+<p>The <tt>:state()</tt> CSS pseudo-class function can be used to select elements with a specific state:</p>
+
+<pre>web-component:<hi>state</hi>( <hi> someState</hi> ) { color : red }</pre>
+
+<p class="note">It appears that custom state attributes are limited to boolean values.</p>
+
+<!--h3--Custom States--></div>
+
+<!--h2--Types of Custom Elements--></div>
+
+<h2 cbc>Demos</h2><div>
+
+<h3 cbc>Demo 1</h3><div>
+
+<p>This project demonstrates a simple autonomous custom element. It is derived from <tt>HTMLElement</tt>. The GUI elements and styles are created in the <tt>connectCallback()</tt> method.</p>
+
+<!--h3--Demo 1--></div>
+
+<!--h2--Demos--></div>
+
+<h2 cbc>Shadow Tree</h2><div>
+
+<p>A shadow-root node creates an access barrier for JavaScript and CSS between the "regular" DOM tree of the host document and the DOM tree formed by the child nodes of the shadow root node, and thereby provides a means of <em>encapsulation</em> for web components. The elements in a shadow tree are still rendered on the screen, but this barrier ensures that the web component works in all kinds of host documents.</p>
+
+<p>The following study sets up a document with a customized built-in element:</p>
+
+<figure class="listing"><figcaption>HTML</figcaption><pre>
+&lt;html&gt;&lt;head&gt;
+&lt;script type="module" src="myComponent.js?shadowmode=closed"&gt;&lt;/script&gt;
+&lt;/head&gt;&lt;body&gt;
+&lt;div id="host" is="my-component"&gt;&lt;/div&gt;
+&lt;span&gt;A SPAN in the regular DOM tree of the document&lt;/span&gt;
+&lt;/body&gt;&lt;/html&gt;
+</pre></figure>
+
+
+
+<pre>
+&lt;style&gt;
+span { color : red }  /* has no effect on the SPAN in the component's shadow tree */
+&lt;/style&gt;
+&lt;script type="module"&gt;
+console.log( document.getElementById( "span-in-shadowtree" )); // null
+console.log( document.getElementById( "host" ).shadowRoot?.getElementById( "span-in-shadowtree" ));  // &lt;span id="span-in-shadowtree"&gt;SPAN in the shadow DOM&lt;/span&gt; or undefined
+&lt;/script&gt;
+</pre>
+
+
+<p>CSS code that is located in the "regular" DOM tree cannot affect elements in a shadow DOM tree. Scripts that are located in the "regular" DOM tree of the the document cannot access elements in a shadow DOM tree that was created with <tt>shadowmode="closed"</tt>. </p>
+
+<p>The shadow root is an element that is attached to a regular DOM element:</p>
+
+<pre>
+const hostElement = document.querySelector( "div#shadowDomHost" );
+const shadowRoot = hostElement.attachShadow( { mode : "open" } );
+const span = document.createElement( "SPAN" );
+span.textContent = "I'm in the shadow DOM";
+shadowRoot.append( span );
+</pre>
+
+<p>A shadow tree can be created programmatically, or declaratively as in the following example:</p>
+
+<pre>
+&lt;div id="host"&gt;
+  &lt;template shadowrootmode="open"&gt;
+    &lt;span&gt;I'm in the shadow DOM&lt;/span&gt;
+  &lt;/template&gt;
+&lt;/div&gt;
+</pre>
+
+<p>The addition of the attribute <tt>shadowrootmode="open"</tt> makes the elements in the shadow tree visible. In the absence of this attribute, the shadow tree is <em>not rendered</em>.</p>
+
+<p>Elements in the shadow tree are not accessible from the document:</p>
+
+<pre>
+const e = document.querySelector( "#elementInShadowTree" );
+</pre>
+
+<p>Similarly, CSS code in the document cannot address elements in a shadow tree.</p>
+
+<p>To access the elements in a shadow tree, the shadow root element must be used:</p>
+
+<pre>
+const e = shadowTreeHost.<hi>shadowRoot</hi>.querySelector( "#elementInShadowTree" );
+</pre>
+
+<p>If you specifiy <tt>mode : "closed"</tt>, this oportunity is eliminated, the shadow root is completely opacque. However, this is not a security feature, because there are ways to overcome this barrier.</p>
+
+<p>CSS can be injected into the shadow tree, either programmatically (by creating a STYLE element, or programmatically, by adding a STYLE element to the TEMPLATE code. Note that CSS in the shadow tree has no effect outside the tree.</p>
+
+<h3 cbc>Events</h3><div>
+
+<p>Elements in a shadow DOM tree can still fire events that bubble through the shadow root into the "regular" DOM tree.</p>
+
+<!--h3--Events--></div>
+
+<!--h2--Shadow DOM--></div>
+
+<h2 cbc>Flash of Unstyled Content (FOUC)</h2><div>
+
+<p><!--TODO--Add content-->This might cause a visible flicker known as "flash of unstyled content (FOUC)". To prevent this, it is advisable to hide the element and make it visible at the end of <tt>connectedCallback()</tt>.</p>
+
+<!--h2--Flash of Unstyled Content--></div>
+
+
+</body></html>
